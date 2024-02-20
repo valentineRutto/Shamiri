@@ -1,6 +1,7 @@
 package com.valentinerutto.shamiri.data.remote
 
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,6 +20,8 @@ data class EpisodesResponse(
         val next: String?,
         @SerialName("pages")
         val pages: Int?,
+        @Contextual
+
         @SerialName("prev")
         val prev: Any?
     )
