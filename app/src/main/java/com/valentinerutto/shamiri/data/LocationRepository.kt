@@ -12,16 +12,22 @@ class LocationRepository(private val apiService: ApiService) {
         if (!response.isSuccessful) {
             return Resource.Error("network error")
         }
+
+       val residents = response.body()?.results?.flatMap { it?.residents!! }
+
         return Resource.Success(mapLocationResponseToLocationItem(response.body()))
 
     }
 
-    suspend fun getCharacters(): Resource<List<ResidentsItem>?> {
+    suspend fun getCharacters( ): Resource<List<ResidentsItem>?> {
         val response = apiService.getAllCharacters()
 
         if (!response.isSuccessful) {
             return Resource.Error("network error")
+
         }
+
+
         return Resource.Success(mapCharacterResponseToResidentsItem(response.body()))
 
     }
