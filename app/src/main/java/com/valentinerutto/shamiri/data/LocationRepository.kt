@@ -20,7 +20,7 @@ class LocationRepository(private val apiService: ApiService) {
         val response = apiService.getAllCharacters()
 
         if (!response.isSuccessful) {
-            return Resource.Error("network erro")
+            return Resource.Error("network error")
         }
         return Resource.Success(mapCharacterResponseToResidentsItem(response.body()))
 
