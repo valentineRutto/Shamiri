@@ -1,11 +1,16 @@
 package com.valentinerutto.shamiri.di
 
+import androidx.lifecycle.ViewModel
 import com.google.gson.GsonBuilder
+import com.valentinerutto.shamiri.data.LocationRepository
 import com.valentinerutto.shamiri.data.remote.ApiService
+import com.valentinerutto.shamiri.ui.LocationViewmodel
 import com.valentinerutto.shamiri.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.BuildConfig
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.Module
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -39,4 +44,14 @@ val networkingModule = module {
             .client(get())
             .build()
     }
+
+
+}
+val repositoryModule = module {
+    single { LocationRepository(get()) }
+}
+val viewmodelModule = module{
+
+    viewModel {  LocationViewmodel(get())}
+
 }
