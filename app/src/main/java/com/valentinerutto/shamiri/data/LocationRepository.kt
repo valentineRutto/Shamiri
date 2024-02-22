@@ -1,5 +1,6 @@
 package com.valentinerutto.shamiri.data
 
+import androidx.core.text.isDigitsOnly
 import com.valentinerutto.shamiri.data.remote.ApiService
 import com.valentinerutto.shamiri.utils.Resource
 import kotlinx.coroutines.NonCancellable
@@ -12,34 +13,35 @@ class LocationRepository(private val apiService: ApiService) {
         if (!response.isSuccessful) {
             return Resource.Error("network error")
         }
+        val residentsIds = mutableListOf<Int>()
+        response.body()?.results?.flatMap { it?.residents!! }?.forEach {
+            it?.substringAfterLast("/")?.toInt()?.let { it1 -> residentsIds.add(it1) }
 
-       val residents = response.body()?.results?.flatMap { it?.residents!! }
+       }
+        getResidents(residentsIds)
 
         return Resource.Success(mapLocationResponseToLocationItem(response.body()))
 
     }
-
-    suspend fun getCharacters( ): Resource<List<ResidentsItem>?> {
+    suspend fun getAllCharacters( ): Resource<List<ResidentsItem>?> {
         val response = apiService.getAllCharacters()
 
         if (!response.isSuccessful) {
             return Resource.Error("network error")
 
         }
-
-
         return Resource.Success(mapCharacterResponseToResidentsItem(response.body()))
 
     }
 
-    suspend fun getResidents() {
+    suspend fun getResidents(ids:List<Int>):Resource<List<ResidentsItem>> {
 
-        val locationResource = withContext(NonCancellable) {
-            getLocation()
+        val response = apiService.getCharactersByIds(ids)
+        if (!response.isSuccessful) {
+            return Resource.Error("network error")
+
         }
-
-        val characters = getCharacters()
-
+        return Resource.Success(mapCharacterResponseToResidentsItem(response.body())!!)
 
     }
 }

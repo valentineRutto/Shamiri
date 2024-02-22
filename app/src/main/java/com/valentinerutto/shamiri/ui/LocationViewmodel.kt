@@ -20,14 +20,18 @@ class LocationViewmodel(private val repository: LocationRepository):ViewModel() 
             is Resource.Loading -> {
 
             }
+
             is Resource.Success -> {
 
             }
+
             is Resource.Error -> {
 
             }
 
-            else -> {}
+            else -> {
+
+            }
         }
     }
 

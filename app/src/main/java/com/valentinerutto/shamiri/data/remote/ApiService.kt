@@ -2,10 +2,13 @@ package com.valentinerutto.shamiri.data.remote
 
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface ApiService {
     @GET("character")
     suspend fun getAllCharacters(): Response<CharactersResponse>
+    @GET("character/{ids}")
+    suspend fun getCharactersByIds(@Path("id") arrayIds:List<Int>): Response<CharacterByIdResponse>
     @GET("location")
     suspend fun getAllLocations(): Response<LocationResponse>
     @GET("episode")
