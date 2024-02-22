@@ -4,7 +4,7 @@ package com.valentinerutto.shamiri.data.remote
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-class CharacterByIdResponse : ArrayList<CharacterByIdResponseItem>(){
+class CharacterByIdResponse : ArrayList<CharacterByIdResponse.CharacterByIdResponseItem>(){
     @Serializable
     data class CharacterByIdResponseItem(
         @SerialName("created")
