@@ -2,6 +2,7 @@ package com.valentinerutto.shamiri.di
 
 import androidx.lifecycle.ViewModel
 import com.google.gson.GsonBuilder
+import com.valentinerutto.shamiri.data.LocationDatabase
 import com.valentinerutto.shamiri.data.LocationRepository
 import com.valentinerutto.shamiri.data.remote.ApiService
 import com.valentinerutto.shamiri.ui.LocationViewmodel
@@ -9,8 +10,10 @@ import com.valentinerutto.shamiri.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.BuildConfig
+import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
+import org.koin.core.scope.Scope
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -48,10 +51,19 @@ val networkingModule = module {
 
 }
 val repositoryModule = module {
-    single { LocationRepository(get()) }
+    single { LocationRepository(get(),database().locationDao(),database().residentsDao()) }
 }
 val viewmodelModule = module{
 
     viewModel {  LocationViewmodel(get())}
 
 }
+
+val databaseModule=module{
+
+    single { LocationDatabase.getDatabase(context = androidContext()) }
+
+
+}
+
+fun Scope.database() = get<LocationDatabase>()

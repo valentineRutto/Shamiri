@@ -3,6 +3,7 @@ package com.valentinerutto.shamiri.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.valentinerutto.shamiri.data.LocationItem
+import com.valentinerutto.shamiri.data.ResidentLocationItem
 
 
 @Composable
@@ -42,18 +43,31 @@ fun MainView(
     }
 
 }
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
-fun NewsListScreen(
-    onItemSelected: (itemPosition: Int) -> Unit,
+fun LocationListScreen(
     modifier: Modifier = Modifier,
-    itemEntity: List<LocationItem>
+    itemUIState: LocationUiState
 ) {
-    LazyColumn(modifier = Modifier.fillMaxHeight()) {
-        itemsIndexed(itemEntity) { index, item ->
+    if (itemUIState.loading) {
+        LoadingView()
+    }
+
+    if (itemUIState.error.isNullOrBlank().not()) {
+        ErrorScreen(modifier = Modifier.padding(4.dp), errorMsg = itemUIState.error)
+    }
+
+    LazyColumn(modifier = Modifier
+        .fillMaxHeight()
+        .clickable {
+
+        }) {
+        itemsIndexed(itemUIState.locationItem) { index, item ->
+            CharacterItem(modifier = modifier, character = item)
         }
     }
 }
+
 @Composable
 fun LoadingView() {
     CircularProgressIndicator(
@@ -61,6 +75,17 @@ fun LoadingView() {
         color = MaterialTheme.colorScheme.secondary,
         trackColor = MaterialTheme.colorScheme.secondary,
     )
+}
+
+@Composable
+fun CharacterItem(
+    modifier: Modifier,
+    character: ResidentLocationItem
+) {
+    Row(modifier = modifier) {
+        ImageComposable(imageUrl = character.characterImage, modifier = modifier)
+        Text(text = character.characterName)
+    }
 }
 
 @Composable

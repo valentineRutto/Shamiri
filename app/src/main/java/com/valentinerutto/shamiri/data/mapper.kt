@@ -1,17 +1,19 @@
 package com.valentinerutto.shamiri.data
 
+import com.valentinerutto.shamiri.data.local.CharacterEntity
+import com.valentinerutto.shamiri.data.local.LocationEntity
 import com.valentinerutto.shamiri.data.remote.CharacterByIdResponse
 import com.valentinerutto.shamiri.data.remote.CharactersResponse
 import com.valentinerutto.shamiri.data.remote.LocationResponse
 import com.valentinerutto.shamiri.utils.orUnknown
 
-fun mapLocationResponseToLocationItem(response: LocationResponse?): List<LocationItem>? {
+fun mapLocationResponseToLocationItem(response: LocationResponse?): List<LocationEntity>? {
     return response?.results?.map {
-        LocationItem(locationName = it?.name.orUnknown("LocationName"), locationType = it?.type.orUnknown("LocationType"), id = it?.id.orUnknown(0), locationUrl = it?.url.orUnknown("Location URL"))
+        LocationEntity(locationName = it?.name.orUnknown("LocationName"), locationType = it?.type.orUnknown("LocationType"), id = it?.id.orUnknown(0), locationUrl = it?.url.orUnknown("Location URL"))
     }
-}fun mapCharacterResponseToResidentsItem(response: CharactersResponse?): List<ResidentsItem>? {
+}fun mapCharacterResponseToCharacterEntity(response: CharactersResponse?): List<CharacterEntity>? {
     return response?.results?.map {
-        ResidentsItem(
+        CharacterEntity(
             characterName = it?.name.orUnknown("Name"),
             characterImage = it?.image.orUnknown("Image"),
             id = it?.id.orUnknown(0),
@@ -20,9 +22,9 @@ fun mapLocationResponseToLocationItem(response: LocationResponse?): List<Locatio
         )
     }
 }
-    fun mapCharacterResponseToResidentsItem(response: CharacterByIdResponse?): List<ResidentsItem>? {
+    fun mapCharacterResponseToResidentsItem(response: CharacterByIdResponse?): List<CharacterEntity>? {
         return response?.map {
-            ResidentsItem(
+            CharacterEntity(
                 characterName = it?.name.orUnknown("Name"),
                 characterImage = it?.image.orUnknown("Image"),
                 id = it?.id.orUnknown(0),

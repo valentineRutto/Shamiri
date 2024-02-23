@@ -1,6 +1,7 @@
 package com.valentinerutto.shamiri
 
 import android.app.Application
+import com.valentinerutto.shamiri.di.databaseModule
 import com.valentinerutto.shamiri.di.networkingModule
 import com.valentinerutto.shamiri.di.repositoryModule
 import com.valentinerutto.shamiri.di.viewmodelModule
@@ -11,7 +12,7 @@ import org.koin.core.context.startKoin
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        val modules = listOf(networkingModule, repositoryModule, viewmodelModule)
+        val modules = listOf(networkingModule, repositoryModule, viewmodelModule, databaseModule)
 
         startKoin {
             androidLogger()

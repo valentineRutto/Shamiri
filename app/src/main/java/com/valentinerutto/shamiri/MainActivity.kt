@@ -8,9 +8,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.valentinerutto.shamiri.ui.LocationListScreen
+import com.valentinerutto.shamiri.ui.LocationViewmodel
 import com.valentinerutto.shamiri.ui.theme.ShamiriTheme
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,10 +24,17 @@ class MainActivity : ComponentActivity() {
             ShamiriTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+
+                    val viewModel = koinViewModel<LocationViewmodel>()
+
+                    LaunchedEffect(Unit) {
+                        viewModel.getLocations()
+                    }
+
+                    val uiState = viewModel.state.collectAsState().value
+                    LocationListScreen(itemUIState = uiState)
                 }
             }
         }
@@ -32,8 +44,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
-        modifier = modifier
+        text = "Hello $name!", modifier = modifier
     )
 }
 
