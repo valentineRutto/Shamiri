@@ -2,7 +2,7 @@ package com.valentinerutto.shamiri.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-@Entity
+@Entity(tableName = "LocationList")
 data class LocationEntity (
 var locationName: String,
 var locationType: String,

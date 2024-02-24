@@ -29,10 +29,11 @@ val networkingModule = module {
             "release" -> HttpLoggingInterceptor.Level.NONE
             else -> HttpLoggingInterceptor.Level.BODY
         }
+
         OkHttpClient.Builder()
             .addInterceptor(interceptor)
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .readTimeout(15, TimeUnit.SECONDS)
+            .connectTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
             .build()
     }
 

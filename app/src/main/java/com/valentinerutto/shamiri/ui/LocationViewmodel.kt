@@ -14,7 +14,10 @@ import kotlinx.coroutines.launch
 class LocationViewmodel(private val repository: LocationRepository) : ViewModel() {
     private val _state = MutableStateFlow(LocationUiState(loading = true))
     val state: StateFlow<LocationUiState> = _state.asStateFlow()
-
+init{
+    viewModelScope.launch {
+    getLocations()
+}}
     suspend fun getLocations() {
         when (val result = repository.getLocation()) {
             is Resource.Loading -> {

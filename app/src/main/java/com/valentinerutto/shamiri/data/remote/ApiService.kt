@@ -8,7 +8,7 @@ interface ApiService {
     @GET("character")
     suspend fun getAllCharacters(): Response<CharactersResponse>
     @GET("character/{ids}")
-    suspend fun getCharactersByIds(@Path("id") arrayIds:List<Int>): Response<CharacterByIdResponse>
+    suspend fun getCharactersByIds(@Path("ids") ids: String): Response<CharacterByIdResponse>
     @GET("location")
     suspend fun getAllLocations(): Response<LocationResponse>
     @GET("episode")

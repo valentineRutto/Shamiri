@@ -3,14 +3,14 @@ package com.valentinerutto.shamiri.data.local
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import retrofit2.http.GET
+import androidx.room.Query
 
 @Dao
 interface LocationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(locations:List<LocationEntity>)
 
-    @GET
+    @Query("SELECT * FROM locationList")
     suspend fun getAllLocations():List<LocationEntity>
 
 }
