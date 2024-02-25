@@ -5,6 +5,7 @@ import com.valentinerutto.shamiri.data.local.CharacterEntity
 import com.valentinerutto.shamiri.data.local.LocationDao
 import com.valentinerutto.shamiri.data.local.LocationEntity
 import com.valentinerutto.shamiri.data.remote.ApiService
+import com.valentinerutto.shamiri.data.remote.LocationResponse
 import com.valentinerutto.shamiri.utils.Resource
 
 class LocationRepository(
@@ -12,10 +13,17 @@ class LocationRepository(
     private val locationDao: LocationDao,
     private val residentsDao: CharacterDao
 ) {
-    private val residentsIds = ArrayList<Int>()
+    suspend fun getPagedLocation(page: Int): Resource<List<LocationResponse.Result?>?> {
+        val response = apiService.getAllLocations(page)
+        if (!response.isSuccessful) {
+            return Resource.Error("network error")
+        }
+        return Resource.Success(response.body()!!.results)
 
-    suspend fun getLocation(): Resource<List<LocationEntity>?> {
-        val response = apiService.getAllLocations()
+    }
+
+    suspend fun getLocation(page: Int): Resource<List<LocationEntity>?> {
+        val response = apiService.getAllLocations(page)
 
         if (!response.isSuccessful) {
             return Resource.Error("network error")
@@ -47,7 +55,7 @@ class LocationRepository(
             getResidents(characterIds.joinToString(",").toList().toString())
         } else if (characterIds!!.isEmpty()) {
 
-         //   _charactersByIds.postValue(NetworkResponse.Success(emptyList()))
+            //   _charactersByIds.postValue(NetworkResponse.Success(emptyList()))
 
         } else {
             getResidents(characterIds.joinToString(","))
@@ -55,53 +63,55 @@ class LocationRepository(
     }
 
 
-suspend fun getAllCharacters(): Resource<List<CharacterEntity>?> {
-    val response = apiService.getAllCharacters()
+    suspend fun getAllCharacters(): Resource<List<CharacterEntity>?> {
+        val response = apiService.getAllCharacters()
 
-    if (!response.isSuccessful) {
-        return Resource.Error("network error")
+        if (!response.isSuccessful) {
+            return Resource.Error("network error")
 
-    }
-    return Resource.Success(mapCharacterResponseToCharacterEntity(response.body()))
-
-}
-
-private suspend fun getResidents(ids: String): Resource<List<CharacterEntity>> {
-
-    val response = apiService.getCharactersByIds(ids)
-    if (!response.isSuccessful) {
-        return Resource.Error("network error")
-    }
-    val entity = mapCharacterResponseToResidentsItem(response.body())
-    if (entity != null) {
-        residentsDao.insertAll(entity)
-    }
-
-    return Resource.Success(entity!!)
-
-}
-
-
-suspend fun getResidentwithLocation(): List<ResidentLocationItem> {
-    val locationList: List<LocationEntity> = locationDao.getAllLocations()
-    val residentsItemList: List<CharacterEntity> = residentsDao.getAllResidents()
-    val residentLocation = mutableListOf<ResidentLocationItem>()
-
-    for (location in locationList) {
-        val residents = residentsItemList.find { it.locationUrl == location.locationUrl }
-        if (residents != null) {
-            val combinedDataClass = ResidentLocationItem(
-                locationName = location.locationName,
-                locationType = location.locationType,
-                characterName = residents.characterName,
-                characterStatus = residents.characterStatus,
-                characterImage = residents.characterImage,
-                id = location.id,
-                locationUrl = location.locationUrl
-            )
-            residentLocation.add(combinedDataClass)
         }
+        return Resource.Success(mapCharacterResponseToCharacterEntity(response.body()))
+
     }
-    return residentLocation
-}
+
+    private suspend fun getResidents(ids: String): Resource<List<CharacterEntity>> {
+
+        val response = apiService.getCharactersByIds(ids)
+
+        if (!response.isSuccessful) {
+            return Resource.Error("network error")
+        }
+
+        val entity = mapCharacterResponseToResidentsItem(response.body())
+        if (entity != null) {
+            residentsDao.insertAll(entity)
+        }
+
+        return Resource.Success(entity!!)
+
+    }
+
+
+    suspend fun getResidentwithLocation(): List<ResidentLocationItem> {
+        val locationList: List<LocationEntity> = locationDao.getAllLocations()
+        val residentsItemList: List<CharacterEntity> = residentsDao.getAllResidents()
+        val residentLocation = mutableListOf<ResidentLocationItem>()
+
+        for (location in locationList) {
+            val residents = residentsItemList.find { it.locationUrl == location.locationUrl }
+            if (residents != null) {
+                val combinedDataClass = ResidentLocationItem(
+                    locationName = location.locationName,
+                    locationType = location.locationType,
+                    characterName = residents.characterName,
+                    characterStatus = residents.characterStatus,
+                    characterImage = residents.characterImage,
+                    id = location.id,
+                    locationUrl = location.locationUrl
+                )
+                residentLocation.add(combinedDataClass)
+            }
+        }
+        return residentLocation
+    }
 }

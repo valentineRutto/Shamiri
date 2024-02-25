@@ -3,6 +3,7 @@ package com.valentinerutto.shamiri.data.remote
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @GET("character")
@@ -10,7 +11,9 @@ interface ApiService {
     @GET("character/{ids}")
     suspend fun getCharactersByIds(@Path("ids") ids: String): Response<CharacterByIdResponse>
     @GET("location")
-    suspend fun getAllLocations(): Response<LocationResponse>
+    suspend fun getAllLocations(
+        @Query("page") page: Int
+    ): Response<LocationResponse>
     @GET("episode")
     suspend fun getAllEpisodes(): Response<EpisodesResponse>
 }
