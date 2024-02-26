@@ -11,7 +11,7 @@ data class LocationResponse(
     val info: Info?,
     @SerialName("results")
     val results: List<Result?>?
-) {
+)
     @Serializable
     data class Info(
         @SerialName("count")
@@ -42,4 +42,3 @@ data class LocationResponse(
         @SerialName("url")
         val url: String?
     )
-}

@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
 //                        viewModel.getLocations()
 //                    }
                     val uiState = viewModel.state.collectAsState().value
-                    Greeting(name = "Shamirri"+uiState.locationItem.toString())
 
                     LocationListScreen(itemUIState = uiState)
                 }

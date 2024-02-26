@@ -6,6 +6,7 @@ import com.valentinerutto.shamiri.data.local.LocationDao
 import com.valentinerutto.shamiri.data.local.LocationEntity
 import com.valentinerutto.shamiri.data.remote.ApiService
 import com.valentinerutto.shamiri.data.remote.LocationResponse
+import com.valentinerutto.shamiri.data.remote.Result
 import com.valentinerutto.shamiri.utils.Resource
 
 class LocationRepository(
@@ -13,13 +14,8 @@ class LocationRepository(
     private val locationDao: LocationDao,
     private val residentsDao: CharacterDao
 ) {
-    suspend fun getPagedLocation(page: Int): Resource<List<LocationResponse.Result?>?> {
-        val response = apiService.getAllLocations(page)
-        if (!response.isSuccessful) {
-            return Resource.Error("network error")
-        }
-        return Resource.Success(response.body()!!.results)
-
+    suspend fun getPagedLocation(page: Int): LocationResponse? {
+       return apiService.getAllLocations(page).body()
     }
 
     suspend fun getLocation(page: Int): Resource<List<LocationEntity>?> {

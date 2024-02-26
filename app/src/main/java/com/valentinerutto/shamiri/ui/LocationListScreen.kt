@@ -19,7 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.valentinerutto.shamiri.data.ResidentLocationItem
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
@@ -47,8 +49,11 @@ fun MainView(
 @Composable
 fun LocationListScreen(
     modifier: Modifier = Modifier,
-    itemUIState: LocationUiState
+    itemUIState: LocationUiState,
+    viewModel: LocationViewmodel = koinViewModel()
 ) {
+    val locations = viewModel.locationsPager.collectAsLazyPagingItems()
+
     if (itemUIState.loading) {
         LoadingView()
     }
