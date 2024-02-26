@@ -3,7 +3,6 @@ package com.valentinerutto.shamiri.data.paging
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.valentinerutto.shamiri.data.LocationRepository
-import com.valentinerutto.shamiri.data.remote.LocationResponse
 import com.valentinerutto.shamiri.data.remote.Result
 import com.valentinerutto.shamiri.utils.Constants
 
@@ -17,7 +16,7 @@ class LocationPagingSource(
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Result> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult.Page<Int, Result> {
         val currentPage = params.key ?: Constants.FIRST_PAGE_INDEX
         val response = repository.getPagedLocation(currentPage)
 //        return when (val result = repository.getPagedLocation(currentPage)) {
@@ -29,11 +28,11 @@ class LocationPagingSource(
 //                nextKey = if (result.data.results.isNullOrEmpty()) null else currentPage + 1
 //            )
 //        }
-        LoadResult.Page(
-            data = response!!.results!!,
-            prevKey = if (currentPage == Constants.FIRST_PAGE_INDEX) null else currentPage - 1,
-            nextKey = if (response.results!!.isNotEmpty()) response.info?.pages?.plus(1) else null
-        )
+    return LoadResult.Page(
+        data = response?.results,
+        prevKey = if (currentPage == Constants.FIRST_PAGE_INDEX) null else currentPage - 1,
+        nextKey = if (response?.results?.isNotEmpty() == true) response.info?.pages?.plus(1) else null
+    )
     }
 
 
