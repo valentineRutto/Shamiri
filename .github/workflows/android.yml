@@ -25,6 +25,14 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
+
+      # Run Tests Build
+    - name: Run gradle tests
+      run: ./gradlew test
+
+      # Run Build Project
+    - name: Build gradle project
+      run: ./gradlew build
   deploy:
     runs-on: ubuntu-latest
 
