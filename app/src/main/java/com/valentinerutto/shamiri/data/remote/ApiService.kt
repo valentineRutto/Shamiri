@@ -12,6 +12,9 @@ interface ApiService {
     suspend fun getCharactersByIds(@Path("ids") ids: String): Response<CharacterByIdResponse>
     @GET("location")
     suspend fun getAllLocations(
+    ): Response<LocationResponse>
+    @GET("location")
+    suspend fun getAllLocationsByPage(
         @Query("page") page: Int
     ): Response<LocationResponse>
     @GET("episode")

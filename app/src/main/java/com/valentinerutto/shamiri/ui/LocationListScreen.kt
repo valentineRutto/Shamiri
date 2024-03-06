@@ -1,16 +1,13 @@
 package com.valentinerutto.shamiri.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,8 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.valentinerutto.shamiri.data.ResidentLocationItem
+import com.valentinerutto.shamiri.data.remote.Result
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -48,28 +47,37 @@ fun MainView(
 
 @Composable
 fun LocationListScreen(
-    modifier: Modifier = Modifier,
-    itemUIState: LocationUiState,
-    viewModel: LocationViewmodel = koinViewModel()
+    modifier: Modifier = Modifier, viewModel: LocationViewmodel = koinViewModel()
 ) {
-    val locations = viewModel.locationsPager.collectAsLazyPagingItems()
-
-    if (itemUIState.loading) {
-        LoadingView()
-    }
-
-    if (itemUIState.error.isNullOrBlank().not()) {
-        ErrorScreen(modifier = Modifier.padding(4.dp), errorMsg = itemUIState.error)
-    }
+    val locations = viewModel.pagedLocationResults.collectAsLazyPagingItems()
 
     LazyColumn(modifier = Modifier
         .fillMaxHeight()
         .clickable {
 
         }) {
-        itemsIndexed(itemUIState.locationItem) { index, item ->
-            CharacterItem(modifier = modifier, character = item)
+        items(locations.itemCount) { item ->
+            LocationItem(modifier = modifier, location = locations[item]!!)
+
         }
+        locations.apply {
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    //   LoadingView()
+
+                }
+
+                loadState.append is LoadState.Loading -> {
+                    //You can add modifier to manage load state when next response page is loading
+                }
+
+                loadState.append is LoadState.Error -> {
+                    //You can use modifier to show error message
+                }
+            }
+        }
+
+
     }
 }
 
@@ -84,12 +92,21 @@ fun LoadingView() {
 
 @Composable
 fun CharacterItem(
-    modifier: Modifier,
-    character: ResidentLocationItem
+    modifier: Modifier, character: ResidentLocationItem
 ) {
     Row(modifier = modifier) {
         ImageComposable(imageUrl = character.characterImage, modifier = modifier)
         Text(text = character.characterName)
+    }
+}
+
+@Composable
+fun LocationItem(
+    modifier: Modifier, location: Result
+) {
+    Row(modifier = modifier) {
+        location.url?.let { ImageComposable(imageUrl = it, modifier = modifier) }
+        location.name?.let { Text(text = it) }
     }
 }
 

@@ -1,28 +1,35 @@
 package com.valentinerutto.shamiri.data
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.valentinerutto.shamiri.data.local.CharacterDao
 import com.valentinerutto.shamiri.data.local.CharacterEntity
 import com.valentinerutto.shamiri.data.local.LocationDao
 import com.valentinerutto.shamiri.data.local.LocationEntity
+import com.valentinerutto.shamiri.data.paging.LocationPagingSource
 import com.valentinerutto.shamiri.data.remote.ApiService
 import com.valentinerutto.shamiri.data.remote.LocationResponse
 import com.valentinerutto.shamiri.data.remote.Result
+import com.valentinerutto.shamiri.utils.ErrorCodes
 import com.valentinerutto.shamiri.utils.Resource
+import kotlinx.coroutines.flow.Flow
 
 class LocationRepository(
     private val apiService: ApiService,
     private val locationDao: LocationDao,
     private val residentsDao: CharacterDao
 ) {
-    suspend fun getPagedLocation(page: Int): LocationResponse? {
-       return apiService.getAllLocations(page).body()
-    }
+   suspend fun getAllLocations(): Flow<PagingData<Result>> = Pager(
+        config = PagingConfig(pageSize = 20, prefetchDistance = 2),
+        pagingSourceFactory = {LocationPagingSource(apiService) }
+    ).flow
 
-    suspend fun getLocation(page: Int): Resource<List<LocationEntity>?> {
-        val response = apiService.getAllLocations(page)
+    suspend fun getLocation(page: Int): Resource<out List<LocationEntity>?> {
+        val response = apiService.getAllLocationsByPage(page)
 
         if (!response.isSuccessful) {
-            return Resource.Error("network error")
+          //  return Resource.Error("network error")
         }
 
         val residents = response.body()?.results?.flatMap { it?.residents!! }
@@ -59,23 +66,12 @@ class LocationRepository(
     }
 
 
-    suspend fun getAllCharacters(): Resource<List<CharacterEntity>?> {
-        val response = apiService.getAllCharacters()
-
-        if (!response.isSuccessful) {
-            return Resource.Error("network error")
-
-        }
-        return Resource.Success(mapCharacterResponseToCharacterEntity(response.body()))
-
-    }
-
     private suspend fun getResidents(ids: String): Resource<List<CharacterEntity>> {
 
         val response = apiService.getCharactersByIds(ids)
 
         if (!response.isSuccessful) {
-            return Resource.Error("network error")
+          //  return Resource.Error(ErrorCodes.NETWORK_SEARCH_ERROR)
         }
 
         val entity = mapCharacterResponseToResidentsItem(response.body())

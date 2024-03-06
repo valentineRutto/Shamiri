@@ -12,6 +12,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.valentinerutto.shamiri.ui.LocationListScreen
 import com.valentinerutto.shamiri.ui.LocationViewmodel
 import com.valentinerutto.shamiri.ui.theme.ShamiriTheme
@@ -29,9 +30,10 @@ class MainActivity : ComponentActivity() {
 
                     val viewModel = koinViewModel<LocationViewmodel>()
 
-//                    LaunchedEffect(Unit) {
-//                        viewModel.getLocations()
-//                    }
+                    LaunchedEffect(Unit) {
+                        viewModel.getLocations()
+                    }
+
                     val uiState = viewModel.state.collectAsState().value
 
                     LocationListScreen(itemUIState = uiState)
