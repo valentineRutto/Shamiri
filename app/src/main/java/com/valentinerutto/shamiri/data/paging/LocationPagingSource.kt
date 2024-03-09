@@ -1,6 +1,7 @@
 package com.valentinerutto.shamiri.data.paging
 
 import android.app.appsearch.SearchResults
+import android.net.Uri
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.valentinerutto.shamiri.data.LocationRepository
@@ -26,12 +27,13 @@ class LocationPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Result> {
         val pageNumber = params.key ?: 1
-        return try ({
+        return try {
             val response = apiService.getAllLocationsByPage(pageNumber)
             val pagedResponse = response.body()
             val data = pagedResponse?.results
 
             var nextPageNumber: Int? = null
+
             if (pagedResponse?.pageInfo?.next != null) {
                 val uri = Uri.parse(pagedResponse.pageInfo.next)
                 val nextPageQuery = uri.getQueryParameter("page")
@@ -43,7 +45,7 @@ class LocationPagingSource(
                 prevKey = null,
                 nextKey = nextPageNumber
             )
-        })!! catch (e: Exception) {
+        } catch (e: Exception) {
             LoadResult.Error(e)
         }
     }

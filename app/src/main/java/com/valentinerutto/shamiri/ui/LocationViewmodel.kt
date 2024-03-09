@@ -1,11 +1,17 @@
 package com.valentinerutto.shamiri.ui
 
+import android.graphics.Movie
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.valentinerutto.shamiri.data.LocationRepository
 import com.valentinerutto.shamiri.data.ResidentLocationItem
+import com.valentinerutto.shamiri.data.local.CharacterEntity
 import com.valentinerutto.shamiri.data.remote.Result
 import com.valentinerutto.shamiri.utils.Constants
 import com.valentinerutto.shamiri.utils.Resource
@@ -18,7 +24,8 @@ class LocationViewmodel(private val repository: LocationRepository) : ViewModel(
     private val _state = MutableStateFlow(LocationUiState(loading = true))
     val state: StateFlow<LocationUiState> = _state.asStateFlow()
     val pagedLocationResults = MutableStateFlow<PagingData<Result>>(PagingData.empty())
-
+    var searchQuery by mutableStateOf("")
+        private set
     init {
         viewModelScope.launch {
             repository.getAllLocations().cachedIn(viewModelScope).collect {

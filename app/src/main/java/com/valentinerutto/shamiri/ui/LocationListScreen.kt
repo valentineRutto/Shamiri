@@ -54,7 +54,6 @@ fun LocationListScreen(
     LazyColumn(modifier = Modifier
         .fillMaxHeight()
         .clickable {
-
         }) {
         items(locations.itemCount) { item ->
             LocationItem(modifier = modifier, location = locations[item]!!)
@@ -67,7 +66,7 @@ fun LocationListScreen(
 
                 }
 
-                loadState.append is LoadState.Loading -> {
+                loadState.append is LoadState.NotLoading -> {
                     //You can add modifier to manage load state when next response page is loading
                 }
 
